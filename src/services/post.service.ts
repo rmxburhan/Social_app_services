@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { SchemaTypes } from "mongoose";
-import Post, { PostDocument, PostQuery } from "src/models/post.model";
+import Post, { PostDocument, PostQuery } from "../models/post.model";
 
 export const getPosts = async (
   query: PostQuery = {}

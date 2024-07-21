@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import RequestAuth from "../types/Request";
-import PostService from "src/services/post.service";
+import PostService from "../services/post.service";
 import { SchemaTypes } from "mongoose";
 
 export const postPost = (req: Request, res: Response, next: NextFunction) => {
