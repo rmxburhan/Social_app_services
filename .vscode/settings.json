@@ -1,0 +1,16 @@
+{
+    "rest-client.environmentVariables": {
+        "local": {
+            "baseUrl": "http://localhost:5000/api",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjlkZjdiMzdlM2RmMTBiMThjMjgxMzgiLCJuYW1lIjoiUml6YWwgQnVyaGFudWRpbiIsInVzZXJuYW1lIjoiMTIzIiwiZW1haWwiOiIxMjNAMTIzLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJDZ4cmNLRFRwY01vTHBRNUVsUFViRWVJS250WlVGUFoydk8xaGRtRHZ5T3Qxc0gxQ0VFLmphIiwiaXNBZG1pbiI6ZmFsc2UsImNyZWF0ZWRBdCI6IjIwMjQtMDctMjJUMDY6MDk6NTUuNTcwWiIsInVwZGF0ZWRBdCI6IjIwMjQtMDctMjJUMDY6MDk6NTUuNTcwWiIsIl9fdiI6MCwiaWF0IjoxNzIxNjUyODYzLCJleHAiOjE3MjE2NTY0NjMsImlzcyI6InJteGJ1cmhhbiJ9.qCAujSL6wgseeTnaxu1HYjSIytzXg75znkSpM9wckH0"
+        },
+        "staging": {
+            "baseUrl": "http://localhost:3001/api",
+            "token": "eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4if"
+        },
+        "production": {
+            "baseUrl": "http://localhost:3002/api",
+            "token": "c3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsI"
+        }
+    }
+}

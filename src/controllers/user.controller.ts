@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import UserService from "../services/user.service";
 import RequestAuth from "../types/Request";
 import postService from "../services/post.service";
+import { User } from "../models/user.model";
 
 export const postUser = async (
   req: Request,
@@ -52,7 +53,7 @@ export const postUser = async (
     try {
       await UserService.saveUser(newUser);
 
-      return res.status(200).json({
+      return res.status(201).json({
         message: "Register success",
       });
     } catch (error: any) {
@@ -83,6 +84,7 @@ export const updateProfile = async (
 ) => {
   try {
     const errors = validationResult(req);
+    console.log(errors);
     if (!errors.isEmpty()) {
       const error = new Error(errors.array()[0].msg);
       error.name = "BadRequest";
@@ -95,10 +97,7 @@ export const updateProfile = async (
       name?: string;
     } = req.body;
 
-    const updatedUser = await UserService.updateUser(
-      updateProfileInput,
-      user.id
-    );
+    const updatedUser = await UserService.updateUser(updateProfileInput, user);
     if (!updatedUser) {
       const error = new Error("Update profile failed");
       error.name = "BadRequest";
@@ -107,7 +106,6 @@ export const updateProfile = async (
 
     return res.status(200).json({
       message: "Profile has been updated.",
-      data: user,
     });
   } catch (error) {
     next(error);
@@ -122,7 +120,7 @@ export const getUsername = async (
   try {
     const { username } = req.params;
     const user = await UserService.findUserBy("username", username);
-
+    return res.status(204).end();
     if (!user) {
       const error = new Error("Username not found");
       error.name = "NotFound";

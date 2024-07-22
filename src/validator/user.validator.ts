@@ -16,7 +16,7 @@ export const validateRegisterInput = [
     .trim(),
 ];
 
-export const validateUpdateProfile = () => [
+export const validateUpdateProfile = [
   body("name").optional().isLength({ min: 5, max: 255 }),
   body("username").optional(),
   body("email")

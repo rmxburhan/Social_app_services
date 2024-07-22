@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { errorHandlers } from "./errror-handler.middleware";
 import tokenService from "../services/token.service";
-import { findUserById } from "src/services/user.service";
-import RequestAuth from "src/types/Request";
+import { findUserById } from "../services/user.service";
+import RequestAuth from "../types/Request";
 
 const authorize = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -24,7 +24,7 @@ const authorize = async (req: Request, res: Response, next: NextFunction) => {
 
     const decoded: any = tokenService.decodeToken(token);
     console.log("Decoded jwt", decoded);
-    const user = await findUserById(decoded.id);
+    const user = await findUserById(decoded._id);
     if (!user) {
       const error = new Error("user is invalid");
       error.name = "Authorization";

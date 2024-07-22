@@ -25,8 +25,8 @@ export const updateUser = async (
     username?: string;
     name?: string;
   },
-  userId: string
-) => await User.findByIdAndUpdate(userId, query);
+  user: UserDocument
+) => await User.findByIdAndUpdate(user.id, query);
 
 export default {
   findUserBy,

@@ -1,31 +1,40 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import {
   validateRegisterInput,
   validateUpdateProfile,
-} from "..//validator/user.validator";
+} from "../validator/user.validator";
 import UserController from "../controllers/user.controller";
 import FollowController from "../controllers/follow.controller";
 import saveController from "../controllers/save.controller";
+import authorize from "../middleware/authorization.middleware";
 const router = Router();
 
 /**
- * Get user profile
- *
- */
-router.get("/", UserController.getUser);
-
-/**
- * update user profile
- */
-router.post("/", validateUpdateProfile, UserController.updateProfile);
-
-/**
- * Register
- * @body [name]
- * @body [email]
- * @body [usrname]
- * @body [password]
+ * Visibility : Protected
+ * Get profile user
  * Success : 201
+ * Error : 401, 400, 500
+ */
+router.get("/", authorize, UserController.getUser);
+
+/**
+ * Visibility : Protected
+ * @property username;
+ * @property email;
+ * @property name;
+ * Success : 200
+ * Error : 401, 400, 500
+ */
+router.put("/", authorize, validateUpdateProfile, UserController.updateProfile);
+
+/**
+ * Visibility : Public
+ * Register
+ * @property caption
+ * @property tags
+ * @property image
+ * Success : 201
+ * Error : 401, 400, 500
  */
 router.post("/register", validateRegisterInput, UserController.postUser);
 
