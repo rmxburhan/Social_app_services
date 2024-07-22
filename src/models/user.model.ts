@@ -14,6 +14,12 @@ export interface UserDocument extends Document {
   hidePassword(): any;
 }
 
+export interface UserQuery extends Document {
+  name?: string;
+  username?: string;
+  email?: string;
+}
+
 const userSchema = new Schema<UserDocument>(
   {
     name: {

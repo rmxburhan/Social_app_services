@@ -10,6 +10,12 @@ const router = Router();
  *
  */
 router.get("/", UserController.getUser);
+
+/**
+ * update user profile
+ */
+router.post("/", UserController.updateProfile);
+
 /**
  * Register
  * @body [name]
@@ -65,6 +71,6 @@ router.get("/:username/followers", FollowController.getFollowers);
  */
 router.get("/:username/following", FollowController.getFollowing);
 
-router.get("/savedpost", saveController.getSaves);
+router.get("/savedposts", saveController.getSaves);
 
 export default router;

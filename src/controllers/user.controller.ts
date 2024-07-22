@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import UserService from "../services/user.service";
 import RequestAuth from "../types/Request";
 import postService from "src/services/post.service";
+import { UserDocument } from "src/models/user.model";
 
 export const postUser = async (
   req: Request,
@@ -83,6 +84,26 @@ export const updateProfile = async (
 ) => {
   try {
     const user = (req as RequestAuth).user;
+    const updateProfileInput: {
+      email?: string;
+      password?: string;
+      name?: string;
+    } = req.body;
+
+    const updatedUser = await UserService.updateUser(
+      updateProfileInput,
+      user.id
+    );
+    if (!updatedUser) {
+      const error = new Error("Update profile failed");
+      error.name = "BadRequest";
+      throw error;
+    }
+
+    return res.status(200).json({
+      message: "Profile has been updated.",
+      data: user,
+    });
   } catch (error) {
     next(error);
   }
@@ -144,4 +165,5 @@ export default {
   getUser,
   getUsername,
   getUserPost,
+  updateProfile,
 };

@@ -20,11 +20,19 @@ export const createUser = ({
 
 export const saveUser = async (user: UserDocument) => await user.save();
 
-// export const updateUser = ()
+export const updateUser = async (
+  query: {
+    email?: string;
+    username?: string;
+    name?: string;
+  },
+  userId: string
+) => await User.findByIdAndUpdate(userId, query);
 
 export default {
   findUserBy,
   findUserById,
   createUser,
+  updateUser,
   saveUser,
 };
