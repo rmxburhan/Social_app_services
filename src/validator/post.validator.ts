@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-const validateCreatePost = [
+export const validateCreatePost = [
   body("caption")
     .optional()
     .isLength({ max: 1024 })
