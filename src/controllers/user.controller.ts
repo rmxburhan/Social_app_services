@@ -77,6 +77,7 @@ export const getUser = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// TODO : error email or username duplicate
 export const updateProfile = async (
   req: Request,
   res: Response,
@@ -120,7 +121,6 @@ export const getUsername = async (
   try {
     const { username } = req.params;
     const user = await UserService.findUserBy("username", username);
-    return res.status(204).end();
     if (!user) {
       const error = new Error("Username not found");
       error.name = "NotFound";

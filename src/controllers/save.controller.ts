@@ -61,7 +61,6 @@ export const getSaves = async (
   try {
     const user = (req as RequestAuth).user;
     const saves = await SaveService.getSaves({ userId: user.id });
-
     return res.status(200).json({
       message: "Saved post succes retrieved.",
       data: saves,

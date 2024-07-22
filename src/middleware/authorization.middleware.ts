@@ -23,7 +23,6 @@ const authorize = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const decoded: any = tokenService.decodeToken(token);
-    console.log("Decoded jwt", decoded);
     const user = await findUserById(decoded._id);
     if (!user) {
       const error = new Error("user is invalid");

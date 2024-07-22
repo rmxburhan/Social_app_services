@@ -39,33 +39,45 @@ router.put("/", authorize, validateUpdateProfile, UserController.updateProfile);
 router.post("/register", validateRegisterInput, UserController.postUser);
 
 /**
- * Get the user data
- * @params [username] string Post;
- *
+ * Visibility : Protected
+ * Get account post
+ * Success : 200
+ * Error : 401, 500
  */
-router.get("/:username", UserController.getUsername);
+router.get("/savedposts", authorize, saveController.getSaves);
+
+/**
+ * Visibility : Protected
+ * Get account data
+ * @params username
+ * Success : 200
+ * Error : 404, 401, 400, 500
+ */
+router.get("/:username", authorize, UserController.getUsername);
 
 /**
  * Get another user post
  * @params [username] string Post;
  */
-router.get("/:username/posts", UserController.getUserPost);
+router.get("/:username/posts", authorize, UserController.getUserPost);
 
 /**
- *
- * Follow user
- * @params [username] : User
- *
+ * Visibility : Protected
+ * Follow account
+ * @params username
+ * Success : 200
+ * Error : 404, 401, 400, 500
  */
-router.post("/:username/follow", FollowController.postFollow);
+router.post("/:username/follow", authorize, FollowController.postFollow);
 
 /**
- *
- * Unfollow user
- * @params [username] : User
- *
+ * Visibility : Protected
+ * Unollow account
+ * @params username
+ * Success : 200
+ * Error : 404, 401, 400, 500
  */
-router.post("/:username/unfollow", FollowController.postUnFollow);
+router.post("/:username/unfollow", authorize, FollowController.postUnFollow);
 
 /**
  *
@@ -73,7 +85,7 @@ router.post("/:username/unfollow", FollowController.postUnFollow);
  * @params [username] : User
  *
  */
-router.get("/:username/followers", FollowController.getFollowers);
+router.get("/:username/followers", authorize, FollowController.getFollowers);
 
 /**
  *
@@ -81,8 +93,6 @@ router.get("/:username/followers", FollowController.getFollowers);
  * @params [username] : User
  *
  */
-router.get("/:username/following", FollowController.getFollowing);
-
-router.get("/savedposts", saveController.getSaves);
+router.get("/:username/following", authorize, FollowController.getFollowing);
 
 export default router;
