@@ -13,18 +13,18 @@ export const getPosts = async (
 export const getPostBy = async (query: PostQuery): Promise<PostDocument> => {
   query.deletedAt = undefined;
   const post = await Post.findOne(query);
-  if (post) {
-    return post;
+  if (!post) {
+    throw (new Error("Post not found").name = "NotFound");
   }
-  throw (new Error("Post not found").name = "NotFound");
+  return post;
 };
 
-export const getPostById = async (id: string) => {
+export const getPostById = async (id: string): Promise<PostDocument> => {
   const post = await Post.findOne({ _id: id, deletedAt: undefined });
-  if (post) {
-    return post;
+  if (!post) {
+    throw (new Error("Post not found.").name = "NotFound");
   }
-  throw (new Error("Post not found.").name = "NotFound");
+  return post;
 };
 
 export const updatePost = async (
