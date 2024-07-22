@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
-import UserService from "../services/user.service";
-const validateEmail = (email: string) => {
-  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-  return email.match(regex);
-};
+import AuthService from "../services/auth.service";
+
 export const postLogin = async (
   req: Request,
   res: Response,
@@ -20,39 +17,12 @@ export const postLogin = async (
       return;
     }
     const loginInput: { username: string; password: string } = req.body;
+    const credentialsData = await AuthService.verifyCredentials(loginInput);
 
-    const isEmail = validateEmail(loginInput.username);
-    let user = await UserService.findUserBy(
-      isEmail ? "email" : "username",
-      loginInput.username
-    );
-
-    if (!user) {
-      const error = new Error();
-      error.message = `${isEmail ? "Email" : "Username"} is not registered.`;
-      error.name = "NotFound";
-      next(error);
-      return;
-    }
-
-    if (user) {
-      const isMatch = user.comparePassword(loginInput.password);
-      // TODO : create token
-      if (!isMatch) {
-        const error = new Error();
-        error.name = "BadRequest";
-        error.message = "Password is incorrect.";
-        next(error);
-        return;
-      }
-      console.log(isMatch);
-
-      return res.status(200).json({
-        token: "",
-        message: "Login success",
-        data: user.id,
-      });
-    }
+    return res.status(200).json({
+      token: credentialsData?.token,
+      data: credentialsData?.user,
+    });
   } catch (error) {
     next(error);
   }

@@ -11,6 +11,12 @@ export const validatorLoginInput = () => {
   ];
 };
 
+export const validateEmail = (email: string) => {
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  return email.match(regex);
+};
+
 export default {
   validatorLoginInput,
+  validateEmail,
 };

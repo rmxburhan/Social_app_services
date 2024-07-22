@@ -18,19 +18,6 @@ export const validateRegisterInput = () => {
   ];
 };
 
-export const validateLoginInput = () => {
-  return [
-    body("username").exists().withMessage("username doesn't exist").trim(),
-
-    body("password")
-      .exists()
-      .withMessage("password doesn't exist")
-      .isLength({ min: 6, max: 50 })
-      .withMessage("password input is invalid")
-      .trim(),
-  ];
-};
-
 export default {
   validateRegisterInput,
 };

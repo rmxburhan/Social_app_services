@@ -1,6 +1,7 @@
 import { Document, Model, Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import { omit } from "ramda";
+
 export interface UserDocument extends Document {
   name: string;
   username: string;
