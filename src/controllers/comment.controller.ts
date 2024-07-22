@@ -104,9 +104,43 @@ export const replyComment = async (
   }
 };
 
+export const likeComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = (req as RequestAuth).user;
+    const like = await CommentService.likeComment(id, user.id);
+    return res.status(201).json({
+      message: "like comment success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unlikeComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = (req as RequestAuth).user;
+    const like = await CommentService.unlikeComment(id, user.id);
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   getComment,
   postComment,
   updateComment,
   deleteComment,
+  likeComment,
+  unlikeComment,
 };

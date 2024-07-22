@@ -1,6 +1,7 @@
-import Comment, { CommentDocument } from "../models/comment.model";
 import dayjs from "dayjs";
-import PostService from "./post.service";
+import Comment, { CommentDocument } from "../models/comment.model";
+import LikeComment from "../models/likecomment.model";
+import likecommentService from "./likecomment.service";
 
 export const getComments = async (postId: string) =>
   await Comment.find({ postId: postId });
@@ -90,6 +91,40 @@ export const replyComment = async ({
   return await saveComment(newComment);
 };
 
+export const likeComment = async (commentId: string, userId: string) => {
+  const comment = await getCommentById(commentId);
+
+  if (!comment) {
+    throw (new Error("Comment not found").name = "NotFound");
+  }
+
+  const like = await likecommentService.getLikeComment(userId, comment.id);
+
+  if (like) {
+    throw (new Error(
+      "You are already like this post. you cannot do it twice"
+    ).name = "BadRequest");
+  }
+
+  const newLike = new LikeComment({
+    commentId: comment.id,
+    userId,
+    createdAt: dayjs().toDate(),
+  });
+
+  await newLike.save();
+  return newLike;
+};
+
+export const unlikeComment = async (commentId: string, userId: string) => {
+  const like = await likecommentService.getLikeComment(userId, commentId);
+  if (!like) {
+    throw (new Error("You are not like the post.").name = "BadRequest");
+  }
+
+  await likecommentService.deletLikeComment(like.id);
+};
+
 export default {
   getComments,
   createComment,
@@ -99,4 +134,6 @@ export default {
   getCommentById,
   replyComment,
   getCommentBy,
+  likeComment,
+  unlikeComment,
 };
