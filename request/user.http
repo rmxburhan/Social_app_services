@@ -1,4 +1,5 @@
-POST http://localhost:5000/api/user/register
+@username = 
+POST {{baseUrl}}/user/register
 Content-Type : application/json
 
 {
@@ -7,3 +8,44 @@ Content-Type : application/json
     "email" :"",
     "password" : ""
 }
+
+### GET : Profile user
+GET {{baseUrl}}/user
+Authorization: Bearer {{token}}
+
+### GET : Account data
+GET {{baseUrl}}/user/{{username}}
+Authorization: Bearer {{token}}
+
+### POST : Update profile
+PUT  {{baseUrl}}/user
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "username" : "rmxburhan"
+}
+
+### POST : Get posts user
+GET  {{baseUrl}}/user/{{username}}/posts
+Authorization: Bearer {{token}}
+
+### POST : Follow user
+POST  {{baseUrl}}/user/{{username}}/follow
+Authorization: Bearer {{token}}
+
+### POST : Unfollow user
+POST  {{baseUrl}}/user/{{username}}/unfollow
+Authorization: Bearer {{token}}
+
+### GET : Follower data
+GET  {{baseUrl}}/user/{{username}}/followers
+Authorization: Bearer {{token}}
+
+### GET : Following data
+GET  {{baseUrl}}/user/{{username}}/followers
+Authorization: Bearer {{token}}
+
+### GET : Saved post
+GET  {{baseUrl}}/user/savedposts
+Authorization: Bearer {{token}}

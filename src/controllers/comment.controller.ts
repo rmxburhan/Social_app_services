@@ -3,6 +3,7 @@ import CommentService from "../services/comment.service";
 import PostService from "../services/post.service";
 import RequestAuth from "../types/Request";
 import { validationResult } from "express-validator";
+import Comment from "../models/comment.model";
 
 export const postComment = async (
   req: Request,
@@ -42,16 +43,19 @@ export const getComment = async (
 ) => {
   try {
     const { id } = req.params;
-    const comment = await CommentService.getCommentById(id);
+    let comment = await CommentService.getCommentById(id);
     if (!comment) {
       const error = new Error("Comment id you search is not exist");
       error.name = "NotFound";
       throw error;
     }
+    const populatedComent = await Comment.populate(comment, {
+      path: "replies",
+    });
 
     return res.status(200).json({
       message: "Comment success retrieved",
-      data: comment,
+      data: populatedComent.toObject(),
     });
   } catch (error) {
     next(error);
@@ -73,6 +77,7 @@ export const updateComment = async (
     const user = (req as RequestAuth).user;
     const { body }: { body: string } = req.body;
     const { id } = req.params;
+
     const comment = await CommentService.updateComment(id, user.id, body);
     return res.status(200).json({
       message: "Update comment success",
@@ -151,7 +156,23 @@ export const unlikeComment = async (
   }
 };
 
-export const getPostComments = async () => {};
+export const getComments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const post = await PostService.getPostById(id);
+    const comments = await CommentService.getComments(post.id);
+    return res.status(200).json({
+      message: "Retrieve comments from post " + id + " success.",
+      data: comments,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export default {
   getComment,
@@ -160,4 +181,6 @@ export default {
   deleteComment,
   likeComment,
   unlikeComment,
+  getComments,
+  replyComment,
 };

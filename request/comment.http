@@ -1,0 +1,25 @@
+@commentId=
+GET http://localhost:5000/api/comments/{{commentId}}
+Authorization: Bearer {{token}}
+
+### PUT : Update comment
+PUT http://localhost:5000/api/comments/{{commentId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "body" : ""
+}
+
+### POST : Reply comment
+POST http://localhost:5000/api/comments/{{commentId}}/reply
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "body" : ""
+}
+
+### DELETE : Delete comment
+DELETE http://localhost:5000/api/comments/{{commentId}}
+Authorization: Bearer {{token}}

@@ -26,7 +26,6 @@ const commentSchema = new Schema<CommentDocument>(
     },
     postId: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "Post",
     },
     deletedAt: {
@@ -34,8 +33,26 @@ const commentSchema = new Schema<CommentDocument>(
       required: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toObject: {
+      getters: true,
+      virtuals: true,
+      versionKey: false,
+    },
+    toJSON: {
+      getters: true,
+      virtuals: true,
+      versionKey: false,
+    },
+  }
 );
+
+commentSchema.virtual("replies", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "replyTo",
+});
 
 export const Comment = model<CommentDocument>("Comment", commentSchema);
 

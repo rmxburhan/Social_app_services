@@ -47,7 +47,9 @@ export const removeSave = async (
 
     const post = await PostService.getPostById(id);
     await SaveService.deleteMySaved(post.id, user.id);
-    return res.status(204).end();
+    return res.status(200).json({
+      message: "Post has been removed from saved list",
+    });
   } catch (error) {
     next(error);
   }

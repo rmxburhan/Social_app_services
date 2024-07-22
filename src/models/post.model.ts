@@ -3,8 +3,8 @@ import { Model, Schema, model, Document } from "mongoose";
 export interface PostDocument extends Document {
   userId: typeof Schema.Types.ObjectId;
   caption: string;
-  image: string[];
-  tags: (typeof Schema.Types.ObjectId)[];
+  image?: string[];
+  tags?: (typeof Schema.Types.ObjectId)[];
   deletedAt?: Date;
 }
 
@@ -23,6 +23,7 @@ const postSchema = new Schema<PostDocument>(
     },
     caption: {
       type: String,
+      required: true,
       max: 1024,
     },
     image: {

@@ -3,12 +3,14 @@ import { SchemaTypes } from "mongoose";
 import Post, { PostDocument, PostQuery } from "../models/post.model";
 import LikePost from "../models/likepost.model";
 import likepostService, { getLikePost } from "./likepost.service";
+import { existsSync, unlinkSync } from "fs";
+import path from "path";
 
 export const getPosts = async (
   query: PostQuery = {}
 ): Promise<PostDocument[]> => {
   query.deletedAt = undefined;
-  const posts = await Post.find({});
+  const posts = await Post.find(query).sort({ createdAt: -1 });
   return posts;
 };
 
@@ -34,32 +36,31 @@ export const getPostById = async (id: string): Promise<PostDocument> => {
 };
 
 export const updatePost = async (
-  {
-    caption,
-    tags,
-  }: {
+  query: {
     caption?: string;
     tags?: (typeof SchemaTypes.ObjectId)[];
   },
   post: PostDocument
-): Promise<PostDocument> => {
-  if (caption) post.caption = caption;
-  if (tags) post.tags = tags;
-  await post.save();
-
-  return post;
-};
+): Promise<PostDocument | null> => await Post.findByIdAndUpdate(post.id, query);
 
 export const savePost = async (post: PostDocument) => await post.save();
 
 export const createPost = ({
   caption,
   tags,
+  userId,
 }: {
   caption: string;
-  tags: string[];
-}) => new Post();
+  tags?: string[];
+  userId: string;
+}) =>
+  new Post({
+    caption,
+    tags,
+    userId,
+  });
 getPostById;
+
 export const deletePost = async (id: string) => {
   const post = await Post.findOne({ _id: id, deletedAt: undefined });
 
@@ -68,7 +69,12 @@ export const deletePost = async (id: string) => {
     error.name = "NotFound";
     throw error;
   }
-
+  post.image?.forEach((item) => {
+    const pathFile = path.join(process.cwd(), item);
+    if (existsSync(pathFile)) {
+      unlinkSync(path.join(process.cwd(), item));
+    }
+  });
   post.deletedAt = dayjs().toDate();
   await post.save();
 };
@@ -87,7 +93,12 @@ export const deleteMyPost = async (id: string, userId: string) => {
     error.name = "Forbidden";
     throw error;
   }
-
+  post.image?.forEach((item) => {
+    const pathFile = path.join(process.cwd(), item);
+    if (existsSync(pathFile)) {
+      unlinkSync(path.join(process.cwd(), item));
+    }
+  });
   post.deletedAt = dayjs().toDate();
   await post.save();
 };

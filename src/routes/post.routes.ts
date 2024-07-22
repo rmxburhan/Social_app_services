@@ -1,15 +1,18 @@
 import { Router } from "express";
-import commentController from "src/controllers/comment.controller";
-import PostController from "src/controllers/post.controller";
-import saveController from "src/controllers/save.controller";
-import { validateCreatePost } from "src/validator/post.validator";
+import commentController from "../controllers/comment.controller";
+import PostController from "../controllers/post.controller";
+import saveController from "../controllers/save.controller";
+import authorize from "../middleware/authorization.middleware";
+import upload, { UploadType } from "../utils/upload";
+import { validateCreatePost } from "../validator/post.validator";
+import { validateCreateComment } from "../validator/comment.validator";
 
 const router = Router();
 
 /**
  *
  */
-router.get("/", PostController.getPosts);
+router.get("/", authorize, PostController.getPosts);
 
 /**
  * Create Post
@@ -18,7 +21,13 @@ router.get("/", PostController.getPosts);
  * @body [image] file[];
  * @body [tags] string[];
  */
-router.post("/", validateCreatePost, PostController.postPost);
+router.post(
+  "/",
+  authorize,
+  upload("image", UploadType.MULTIPLE),
+  validateCreatePost,
+  PostController.postPost
+);
 
 /**
  * Get post
@@ -26,7 +35,7 @@ router.post("/", validateCreatePost, PostController.postPost);
  * @params id ObjectId [Post]
  *
  */
-router.get("/:id", PostController.getPost);
+router.get("/:id", authorize, PostController.getPost);
 
 /**
  * Delete post
@@ -34,21 +43,27 @@ router.get("/:id", PostController.getPost);
  * @params id ObjectId [Post]
  *
  */
-router.delete("/:id", PostController.deletePost);
+router.delete("/:id", authorize, PostController.deletePost);
 
 /**
  * Update post
  *
- * @params body;
- * @params image;
+ * @params caption;
+ * @params tags : string[];
  *
  */
-router.post("/:id", validateCreatePost, PostController.updatePost);
+router.post("/:id", authorize, validateCreatePost, PostController.updatePost);
 
-router.post("/:id/like", PostController.likePost);
-router.post("/:id/unlike", PostController.unlikePost);
-router.post("/:id/save", saveController.postSave);
-router.post("/:id/unsave", saveController.removeSave);
-router.post("/:id/comments", validateCreatePost, commentController.postComment);
+router.post("/:id/like", authorize, PostController.likePost);
+router.post("/:id/unlike", authorize, PostController.unlikePost);
+router.post("/:id/save", authorize, saveController.postSave);
+router.post("/:id/unsave", authorize, saveController.removeSave);
+router.get("/:id/comments", authorize, commentController.getComments);
+router.post(
+  "/:id/comments",
+  authorize,
+  validateCreateComment,
+  commentController.postComment
+);
 
 export default router;

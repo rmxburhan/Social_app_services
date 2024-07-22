@@ -99,8 +99,9 @@ export const postUnFollow = async (
     }
 
     await FollowService.deleteFollow(followingData.id);
-    // TODO : update status to 200
-    return res.status(204).end();
+    return res.status(200).json({
+      message: "Unfollow " + username + " success.",
+    });
   } catch (error) {
     next(error);
   }

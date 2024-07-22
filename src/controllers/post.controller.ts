@@ -3,6 +3,9 @@ import RequestAuth from "../types/Request";
 import PostService from "../services/post.service";
 import { SchemaTypes } from "mongoose";
 import { validationResult } from "express-validator";
+import { unlinkSync } from "fs";
+import path from "path";
+import Post from "../models/post.model";
 
 export const postPost = async (
   req: Request,
@@ -16,13 +19,36 @@ export const postPost = async (
       error.name = "BadRequest";
       throw error;
     }
+
     const user = (req as RequestAuth).user;
-    const postInput: {
-      caption?: string;
-      tags?: string[];
-    } = req.body;
-    // const image = req.file;
+    const { caption, tags }: { caption: string; tags: string[] } = req.body;
+    console.log(tags);
+    const post = PostService.createPost({
+      caption,
+      tags,
+      userId: user.id,
+    });
+    if (req.files) {
+      let imagesPath: string[] = [];
+      const images = req.files as Express.Multer.File[];
+      images.forEach((item) => {
+        imagesPath.push(item.path);
+      });
+      post.image = imagesPath;
+    }
+
+    await PostService.savePost(post);
+    return res.status(201).json({
+      message: "Post has been created",
+      data: post,
+    });
   } catch (error) {
+    if (req.files) {
+      const image = req.files as Express.Multer.File[];
+      image.forEach((item) => {
+        unlinkSync(path.join(process.cwd(), item.path));
+      });
+    }
     next(error);
   }
 };
@@ -55,21 +81,25 @@ export const updatePost = async (
       error.name = "BadRequest";
       throw error;
     }
+
     const user = (req as RequestAuth).user;
     const { id } = req.params;
+
     const updateInput: {
       caption?: string;
-      tags: (typeof SchemaTypes.ObjectId)[];
+      tags?: (typeof SchemaTypes.ObjectId)[];
     } = req.body;
+
     const post = await PostService.getPostById(id);
 
-    if (post.id !== user.id) {
+    if (post.userId.toString() !== user.id) {
       const error = new Error("You cannot update another user post");
       error.name = "Forbidden";
       throw error;
     }
 
     await PostService.updatePost(updateInput, post);
+
     return res.status(200).json({
       message: "Update post success.",
     });
@@ -138,7 +168,9 @@ export const unlikePost = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await PostService.unlikePost(id, user.id);
-    return res.status(204).end();
+    return res.status(200).json({
+      message: "Post has been unliked",
+    });
   } catch (error) {
     next(error);
   }

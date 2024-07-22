@@ -14,7 +14,7 @@ export const createComment = ({
 }: {
   body: string;
   userId: string;
-  postId: string;
+  postId?: string;
   replyTo?: string;
 }) =>
   new Comment({
@@ -40,6 +40,10 @@ export const deleteComment = async (id: string, userId: string) => {
   }
 
   comment.deletedAt = dayjs().toDate();
+  await Comment.updateMany(
+    { replyTo: comment.id },
+    { deletedAt: dayjs().toDate() }
+  );
   await comment.save();
 };
 
@@ -66,8 +70,7 @@ export const updateComment = async (
   }
 
   comment.body = body;
-  await comment.save();
-  return comment;
+  return await comment.save();
 };
 
 export const getCommentBy = async (prop: string, value: string) =>
@@ -92,7 +95,6 @@ export const replyComment = async ({
   const newComment = createComment({
     body,
     userId,
-    postId: comment.postId.toString(),
     replyTo: comment.id,
   });
 

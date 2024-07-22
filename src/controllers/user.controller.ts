@@ -3,7 +3,6 @@ import { validationResult } from "express-validator";
 import UserService from "../services/user.service";
 import RequestAuth from "../types/Request";
 import postService from "../services/post.service";
-import { User } from "../models/user.model";
 
 export const postUser = async (
   req: Request,

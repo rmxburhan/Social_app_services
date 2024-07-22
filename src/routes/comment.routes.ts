@@ -1,12 +1,20 @@
 import { Router } from "express";
-import commentController from "src/controllers/comment.controller";
-import { validateCreateComment } from "src/validator/comment.validator";
+import commentController from "../controllers/comment.controller";
+import { validateCreateComment } from "../validator/comment.validator";
+import authorize from "../middleware/authorization.middleware";
 
 const router = Router();
 
-router.get("/:id", commentController.getComment);
+router.get("/:id", authorize, commentController.getComment);
 
-router.delete("/:id", commentController.deleteComment);
+router.post("/:id/reply", authorize, commentController.replyComment);
 
-router.put("/:id", validateCreateComment, commentController.updateComment);
+router.delete("/:id", authorize, commentController.deleteComment);
+
+router.put(
+  "/:id",
+  authorize,
+  validateCreateComment,
+  commentController.updateComment
+);
 export default router;
