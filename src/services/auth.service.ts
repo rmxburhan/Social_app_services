@@ -13,7 +13,7 @@ export const verifyCredentials = async (
 ): Promise<CredentialData | null> => {
   let key = validateEmail(loginInput.username) ? "email" : "username";
 
-  let user = await UserService.findUserBy("email", loginInput.username);
+  let user = await UserService.findUserBy(key, loginInput.username);
   if (!user) {
     const error = new Error(`${key} is not registered.`);
     error.name = "NotFound";

@@ -9,7 +9,7 @@
             "token": "eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4if"
         },
         "production": {
-            "baseUrl": "http://localhost:3002/api",
+            "baseUrl": "https://social-media-services.onrender.com/api",
             "token": "c3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsI"
         }
     }
