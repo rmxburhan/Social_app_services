@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import { SchemaTypes } from "mongoose";
 import Post, { PostDocument, PostQuery } from "../models/post.model";
-import LikePost from "src/models/likepost.model";
-import likepostService, { getLikeById } from "./likepost.service";
+import LikePost from "../models/likepost.model";
+import likepostService, { getLikePost } from "./likepost.service";
 
 export const getPosts = async (
   query: PostQuery = {}
@@ -89,6 +89,11 @@ export const deleteMyPost = async (
 export const likePost = async (postId: string, userId: string) => {
   const post = await getPostById(postId);
 
+  const like = await getLikePost(userId, postId);
+  if (like) {
+    throw (new Error("You had like the post").name = "BadRequest");
+  }
+
   const newLike = new LikePost({
     postId: post.id,
     userId: userId,
@@ -99,12 +104,14 @@ export const likePost = async (postId: string, userId: string) => {
   return newLike;
 };
 
-export const unlikePost = async (likeId: string, userId: string) => {
-  const like = await likepostService.getLikeById(likeId);
-  if (like.userId.toString() !== userId) {
-    throw (new Error("You touch other user data").name = "Forbidden");
+export const unlikePost = async (postId: string, userId: string) => {
+  const like = await likepostService.getLikePost(userId, postId);
+
+  if (!like) {
+    throw (new Error("You were had not like this post").name = "BadRequest");
   }
-  await LikePost.deleteOne({ _id: like.id });
+
+  await likepostService.deleteLikePost(like.id);
 };
 
 export default {

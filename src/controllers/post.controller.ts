@@ -103,9 +103,8 @@ export const likePost = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await PostService.likePost(id, user.id);
-
-    return res.status(200).json({
-      message: "Like success",
+    return res.status(201).json({
+      message: "Like post success",
     });
   } catch (error) {
     next(error);
