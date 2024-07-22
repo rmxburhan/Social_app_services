@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import RequestAuth from "../types/Request";
 import PostService from "../services/post.service";
 import { SchemaTypes } from "mongoose";
+import likepostService from "src/services/likepost.service";
 
 export const postPost = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -132,4 +133,6 @@ export default {
   updatePost,
   getPost,
   getPosts,
+  likePost,
+  unlikePost,
 };

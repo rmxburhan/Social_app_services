@@ -136,6 +136,8 @@ export const unlikeComment = async (
   }
 };
 
+export const getPostComments = async () => {};
+
 export default {
   getComment,
   postComment,

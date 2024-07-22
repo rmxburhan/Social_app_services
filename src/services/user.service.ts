@@ -20,6 +20,8 @@ export const createUser = ({
 
 export const saveUser = async (user: UserDocument) => await user.save();
 
+// export const updateUser = ()
+
 export default {
   findUserBy,
   findUserById,
