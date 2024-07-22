@@ -19,7 +19,9 @@ export const postSave = async (
     });
 
     if (exist) {
-      throw (new Error("Already saved").name = "BadRequest");
+      const error = new Error("Already saved");
+      error.name = "BadRequest";
+      throw error;
     }
 
     await SaveService.createSave({

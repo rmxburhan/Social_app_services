@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import UserService from "../services/user.service";
 import RequestAuth from "../types/Request";
-import postService from "src/services/post.service";
-import { UserDocument } from "src/models/user.model";
+import postService from "../services/post.service";
 
 export const postUser = async (
   req: Request,
@@ -83,6 +82,12 @@ export const updateProfile = async (
   next: NextFunction
 ) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.name = "BadRequest";
+      throw error;
+    }
     const user = (req as RequestAuth).user;
     const updateProfileInput: {
       email?: string;

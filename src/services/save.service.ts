@@ -11,7 +11,9 @@ export const getSaveById = async (id: string): Promise<SaveDocument> => {
   const save = await Save.findById(id);
 
   if (!save) {
-    throw (new Error("Save not found").name = "NotFound");
+    const error = new Error("Save not found");
+    error.name = "NotFound";
+    throw error;
   }
   return save;
 };
@@ -19,8 +21,9 @@ export const getSaveById = async (id: string): Promise<SaveDocument> => {
 export const deleteMySaved = async (id: string, userId: string) => {
   const saveData = await getSaveById(id);
   if (saveData.userId.toString() !== userId) {
-    throw (new Error("You cannot delete another user saved post").name =
-      "Forbidden");
+    const error = new Error("You cannot delete another user saved post");
+    error.name = "Forbidden";
+    throw error;
   }
   await Save.deleteOne({ _id: saveData._id });
 };

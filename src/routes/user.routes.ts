@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { validateRegisterInput } from "..//validator/user.validator";
+import {
+  validateRegisterInput,
+  validateUpdateProfile,
+} from "..//validator/user.validator";
 import UserController from "../controllers/user.controller";
-import FollowController from "src/controllers/follow.controller";
-import saveController from "src/controllers/save.controller";
+import FollowController from "../controllers/follow.controller";
+import saveController from "../controllers/save.controller";
 const router = Router();
 
 /**
@@ -14,7 +17,7 @@ router.get("/", UserController.getUser);
 /**
  * update user profile
  */
-router.post("/", UserController.updateProfile);
+router.post("/", validateUpdateProfile, UserController.updateProfile);
 
 /**
  * Register
@@ -24,7 +27,7 @@ router.post("/", UserController.updateProfile);
  * @body [password]
  * Success : 201
  */
-router.post("/register", validateRegisterInput(), UserController.postUser);
+router.post("/register", validateRegisterInput, UserController.postUser);
 
 /**
  * Get the user data

@@ -10,11 +10,9 @@ export const postLogin = async (
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const error = new Error();
+      const error = new Error(errors.array()[0].msg);
       error.name = "ValidationError";
-      error.message = errors.array()[0].msg;
-      next(error);
-      return;
+      throw error;
     }
     const loginInput: { username: string; password: string } = req.body;
     const credentialsData = await AuthService.verifyCredentials(loginInput);

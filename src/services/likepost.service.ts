@@ -4,7 +4,9 @@ export const getLikePostById = async (id: string) => {
   const like = await LikePost.findOne({ _id: id });
 
   if (!like) {
-    throw (new Error("Like id not found").name = "NotFound");
+    const error = new Error("Like id not found");
+    error.name = "NotFound";
+    throw error;
   }
   return like;
 };

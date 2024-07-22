@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import CommentService from "../services/comment.service";
 import PostService from "../services/post.service";
 import RequestAuth from "../types/Request";
+import { validationResult } from "express-validator";
 
 export const postComment = async (
   req: Request,
@@ -9,6 +10,12 @@ export const postComment = async (
   next: NextFunction
 ) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.name = "BadRequest";
+      throw error;
+    }
     const { id } = req.params;
     const { body } = req.body;
     const user = (req as RequestAuth).user;
@@ -37,7 +44,9 @@ export const getComment = async (
     const { id } = req.params;
     const comment = await CommentService.getCommentById(id);
     if (!comment) {
-      throw (new Error("Comment id you search is not exist").name = "NotFound");
+      const error = new Error("Comment id you search is not exist");
+      error.name = "NotFound";
+      throw error;
     }
 
     return res.status(200).json({
@@ -55,6 +64,12 @@ export const updateComment = async (
   next: NextFunction
 ) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.name = "BadRequest";
+      throw error;
+    }
     const user = (req as RequestAuth).user;
     const { body }: { body: string } = req.body;
     const { id } = req.params;

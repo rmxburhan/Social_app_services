@@ -2,14 +2,24 @@ import { NextFunction, Request, Response } from "express";
 import RequestAuth from "../types/Request";
 import PostService from "../services/post.service";
 import { SchemaTypes } from "mongoose";
-import likepostService from "src/services/likepost.service";
+import { validationResult } from "express-validator";
 
-export const postPost = (req: Request, res: Response, next: NextFunction) => {
+export const postPost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.name = "BadRequest";
+      throw error;
+    }
     const user = (req as RequestAuth).user;
     const postInput: {
-      caption: string;
-      tags: string[];
+      caption?: string;
+      tags?: string[];
     } = req.body;
     // const image = req.file;
   } catch (error) {
@@ -39,6 +49,12 @@ export const updatePost = async (
   next: NextFunction
 ) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.name = "BadRequest";
+      throw error;
+    }
     const user = (req as RequestAuth).user;
     const { id } = req.params;
     const updateInput: {
@@ -48,8 +64,9 @@ export const updatePost = async (
     const post = await PostService.getPostById(id);
 
     if (post.id !== user.id) {
-      throw (new Error("You cannot update another user post").name =
-        "Forbidden");
+      const error = new Error("You cannot update another user post");
+      error.name = "Forbidden";
+      throw error;
     }
 
     await PostService.updatePost(updateInput, post);

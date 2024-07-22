@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import { UserDocument, User } from "../models/user.model";
 
 export const findUserBy = async (prop: string, value: string) =>

@@ -29,11 +29,14 @@ export const saveComment = async (data: CommentDocument) => await data.save();
 export const deleteComment = async (id: string, userId: string) => {
   const comment = await getCommentById(id);
   if (!comment) {
-    throw (new Error("Comment not found.").name = "NotFound");
+    const error = new Error("Comment not found.");
+    error.name = "NotFound";
+    throw error;
   }
   if (comment.userId.toString() !== userId) {
-    throw (new Error("You cannot delete another person comment").name =
-      "Forbidden");
+    const error = new Error("You cannot delete another person comment");
+    error.name = "Forbidden";
+    throw error;
   }
 
   comment.deletedAt = dayjs().toDate();
@@ -51,12 +54,15 @@ export const updateComment = async (
   const comment = await getCommentById(commentId);
 
   if (!comment) {
-    throw (new Error("Comment is not found").name = "NotFound");
+    const error = new Error("Comment is not found");
+    error.name = "NotFound";
+    throw error;
   }
 
   if (comment.userId.toString() !== userId) {
-    throw (new Error("You cannot edit another user comment").name =
-      "Forbidden");
+    const error = new Error("You cannot edit another user comment");
+    error.name = "Forbidden";
+    throw error;
   }
 
   comment.body = body;
@@ -78,7 +84,9 @@ export const replyComment = async ({
 }) => {
   const comment = await getCommentById(replyTo);
   if (!comment) {
-    throw (new Error("Comment not found").name = "NotFound");
+    const error = new Error("Comment not found");
+    error.name = "NotFound";
+    throw error;
   }
 
   const newComment = createComment({
@@ -95,15 +103,19 @@ export const likeComment = async (commentId: string, userId: string) => {
   const comment = await getCommentById(commentId);
 
   if (!comment) {
-    throw (new Error("Comment not found").name = "NotFound");
+    const error = new Error("Comment not found");
+    error.name = "NotFound";
+    throw error;
   }
 
   const like = await likecommentService.getLikeComment(userId, comment.id);
 
   if (like) {
-    throw (new Error(
+    const error = new Error(
       "You are already like this post. you cannot do it twice"
-    ).name = "BadRequest");
+    );
+    error.name = "BadRequest";
+    throw error;
   }
 
   const newLike = new LikeComment({
@@ -119,7 +131,9 @@ export const likeComment = async (commentId: string, userId: string) => {
 export const unlikeComment = async (commentId: string, userId: string) => {
   const like = await likecommentService.getLikeComment(userId, commentId);
   if (!like) {
-    throw (new Error("You are not like the post.").name = "BadRequest");
+    const error = new Error("You are not like the post.");
+    error.name = "BadRequest";
+    throw error;
   }
 
   await likecommentService.deletLikeComment(like.id);

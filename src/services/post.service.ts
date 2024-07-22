@@ -16,7 +16,9 @@ export const getPostBy = async (query: PostQuery): Promise<PostDocument> => {
   query.deletedAt = undefined;
   const post = await Post.findOne(query);
   if (!post) {
-    throw (new Error("Post not found").name = "NotFound");
+    const error = new Error("Post not found");
+    error.name = "NotFound";
+    throw error;
   }
   return post;
 };
@@ -24,7 +26,9 @@ export const getPostBy = async (query: PostQuery): Promise<PostDocument> => {
 export const getPostById = async (id: string): Promise<PostDocument> => {
   const post = await Post.findOne({ _id: id, deletedAt: undefined });
   if (!post) {
-    throw (new Error("Post not found.").name = "NotFound");
+    const error = new Error("Post not found.");
+    error.name = "NotFound";
+    throw error;
   }
   return post;
 };
@@ -60,26 +64,28 @@ export const deletePost = async (id: string) => {
   const post = await Post.findOne({ _id: id, deletedAt: undefined });
 
   if (!post) {
-    throw (new Error("Post not found. Delete failed").name = "NotFound");
+    const error = new Error("Post not found. Delete failed");
+    error.name = "NotFound";
+    throw error;
   }
 
   post.deletedAt = dayjs().toDate();
   await post.save();
 };
 
-export const deleteMyPost = async (
-  id: string,
-  userId: typeof SchemaTypes.ObjectId
-) => {
+export const deleteMyPost = async (id: string, userId: string) => {
   const post = await Post.findOne({ _id: id, deletedAt: undefined });
 
   if (!post) {
-    throw (new Error("Post not found. Delete failed").name = "NotFound");
+    const error = new Error("Post not found. Delete failed");
+    error.name = "NotFound";
+    throw error;
   }
 
-  if (post.userId !== userId) {
-    throw (new Error("You cannot delete another person post").name =
-      "Forbidden");
+  if (post.userId.toString() !== userId) {
+    const error = new Error("You cannot delete another person post");
+    error.name = "Forbidden";
+    throw error;
   }
 
   post.deletedAt = dayjs().toDate();
@@ -91,7 +97,9 @@ export const likePost = async (postId: string, userId: string) => {
 
   const like = await getLikePost(userId, postId);
   if (like) {
-    throw (new Error("You had like the post").name = "BadRequest");
+    const error = new Error("You had like the post");
+    error.name = "BadRequest";
+    throw error;
   }
 
   const newLike = new LikePost({
@@ -108,7 +116,9 @@ export const unlikePost = async (postId: string, userId: string) => {
   const like = await likepostService.getLikePost(userId, postId);
 
   if (!like) {
-    throw (new Error("You were had not like this post").name = "BadRequest");
+    const error = new Error("You were had not like this post");
+    error.name = "BadRequest";
+    throw error;
   }
 
   await likepostService.deleteLikePost(like.id);
