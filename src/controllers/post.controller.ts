@@ -94,6 +94,39 @@ export const getPosts = async (
   }
 };
 
+export const likePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = (req as RequestAuth).user;
+    const like = await PostService.likePost(id, user.id);
+
+    return res.status(200).json({
+      message: "Like success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unlikePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const user = (req as RequestAuth).user;
+    const like = await PostService.unlikePost(id, user.id);
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   postPost,
   deletePost,

@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { SchemaTypes } from "mongoose";
 import Post, { PostDocument, PostQuery } from "../models/post.model";
+import LikePost from "src/models/likepost.model";
+import likepostService, { getLikeById } from "./likepost.service";
 
 export const getPosts = async (
   query: PostQuery = {}
@@ -84,6 +86,27 @@ export const deleteMyPost = async (
   await post.save();
 };
 
+export const likePost = async (postId: string, userId: string) => {
+  const post = await getPostById(postId);
+
+  const newLike = new LikePost({
+    postId: post.id,
+    userId: userId,
+    createdAt: dayjs().toDate(),
+  });
+
+  await newLike.save();
+  return newLike;
+};
+
+export const unlikePost = async (likeId: string, userId: string) => {
+  const like = await likepostService.getLikeById(likeId);
+  if (like.userId.toString() !== userId) {
+    throw (new Error("You touch other user data").name = "Forbidden");
+  }
+  await LikePost.deleteOne({ _id: like.id });
+};
+
 export default {
   createPost,
   deletePost,
@@ -93,4 +116,6 @@ export default {
   getPosts,
   updatePost,
   deleteMyPost,
+  likePost,
+  unlikePost,
 };
