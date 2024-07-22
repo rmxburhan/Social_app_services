@@ -1,0 +1,80 @@
+# recommended use postman or any other api client 
+# ### POST : Create post
+# POST {{baseUrl}}/posts/
+# Authorization:  Bearer {{token}}
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+# Content-Disposition: form-data; name="caption"
+
+# This is a caption for the file
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="tags[]"
+
+# tag1
+
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW
+# Content-Disposition: form-data; name="image"; filename="90761910_p0.jpg"
+# Content-Type: image/jpeg
+
+# < ./90761910_p0.jpg
+# ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### GET : Get posts
+GET http://localhost:5000/api/posts/
+Authorization: Bearer {{token}}
+
+### GET : Get post
+GET http://localhost:5000/api/posts/669e7b3d6a6eeb5204a05dbb
+Authorization: Bearer {{token}}
+
+### Delete : Delete post
+DELETE http://localhost:5000/api/posts/669e842a6ef5b1ec96479784
+Authorization: Bearer {{token}}
+
+### POST : Update post
+POST http://localhost:5000/api/posts/669e842a6ef5b1ec96479784
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "caption" : "",
+    "tags" : [
+        ""
+    ]
+}
+
+### POST : Like post
+POST http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/like
+Authorization: Bearer {{token}}
+
+### POST : Unlike post
+POST http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/unlike
+Authorization: Bearer {{token}}
+
+
+### POST : Save post
+POST http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/save
+Authorization: Bearer {{token}}
+
+
+### POST : Unsave post
+POST http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/unsave
+Authorization: Bearer {{token}}
+
+
+### GET : Comment post
+GET http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/comments
+Authorization: Bearer {{token}}
+
+### POST : Comment post
+POST http://localhost:5000/api/posts/669e7b3a6a6eeb5204a05db8/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "body" : ""
+}   

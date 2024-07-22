@@ -12,7 +12,6 @@ export const postFollow = async (
     const { username } = req.params;
     const user = (req as RequestAuth).user;
     const followUserData = await UserService.findUserBy("username", username);
-
     if (!followUserData) {
       const error = new Error();
       error.name = "NotFound";
@@ -24,7 +23,7 @@ export const postFollow = async (
     if (followUserData.id === user.id) {
       const error = new Error();
       error.name = "Forbidden";
-      error.message = "Can't follow yourseld";
+      error.message = "Can't follow yourself";
       next(error);
       return;
     }
@@ -81,7 +80,7 @@ export const postUnFollow = async (
     if (userFollowingData.id === user.id) {
       const error = new Error();
       error.name = "Forbidden";
-      error.message = "Can't unfollow yourseld";
+      error.message = "Can't unfollow yourself";
       next(error);
       return;
     }
@@ -100,8 +99,9 @@ export const postUnFollow = async (
     }
 
     await FollowService.deleteFollow(followingData.id);
-
-    return res.status(204).end();
+    return res.status(200).json({
+      message: "Unfollow " + username + " success.",
+    });
   } catch (error) {
     next(error);
   }
@@ -113,9 +113,9 @@ export const getFollowers = async (
   next: NextFunction
 ) => {
   try {
-    const { uesrname } = req.params;
+    const { username } = req.params;
 
-    const userData = await UserService.findUserBy("username", uesrname);
+    const userData = await UserService.findUserBy("username", username);
     if (!userData) {
       const error = new Error();
       error.name = "NotFound";
@@ -130,7 +130,7 @@ export const getFollowers = async (
     );
 
     return res.status(200).json({
-      message: "Followers data from " + uesrname + " success retrieved.",
+      message: "Followers data from " + username + " success retrieved.",
       data: followers,
     });
   } catch (error) {

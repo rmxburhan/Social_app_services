@@ -1,4 +1,3 @@
-import { Model } from "mongoose";
 import { UserDocument, User } from "../models/user.model";
 
 export const findUserBy = async (prop: string, value: string) =>
@@ -20,9 +19,19 @@ export const createUser = ({
 
 export const saveUser = async (user: UserDocument) => await user.save();
 
+export const updateUser = async (
+  query: {
+    email?: string;
+    username?: string;
+    name?: string;
+  },
+  user: UserDocument
+) => await User.findByIdAndUpdate(user.id, query);
+
 export default {
   findUserBy,
   findUserById,
   createUser,
+  updateUser,
   saveUser,
 };

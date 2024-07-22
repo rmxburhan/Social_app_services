@@ -1,4 +1,4 @@
-import Follow, { FollowDocument } from "src/models/follow.model";
+import Follow, { FollowDocument } from "../models/follow.model";
 
 export const createFollow = ({
   followingId,

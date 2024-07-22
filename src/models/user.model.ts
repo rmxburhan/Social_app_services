@@ -1,6 +1,7 @@
 import { Document, Model, Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import { omit } from "ramda";
+
 export interface UserDocument extends Document {
   name: string;
   username: string;
@@ -11,6 +12,12 @@ export interface UserDocument extends Document {
   comparePassword(password: string): boolean;
   hashPassword(): Promise<string>;
   hidePassword(): any;
+}
+
+export interface UserQuery extends Document {
+  name?: string;
+  username?: string;
+  email?: string;
 }
 
 const userSchema = new Schema<UserDocument>(

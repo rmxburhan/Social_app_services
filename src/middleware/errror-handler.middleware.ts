@@ -7,7 +7,25 @@ export const errorHandlers = (
   next: NextFunction
 ) => {
   if (error) {
-    return res.status(500).json({
+    let code = 500;
+    switch (error.name) {
+      case "Auhorization":
+        code = 401;
+        break;
+      case "BadRequest":
+        code = 400;
+        break;
+      case "NotFound":
+        code = 404;
+        break;
+      case "Forbidden":
+        code = 403;
+        break;
+      default:
+        code = 500;
+        break;
+    }
+    return res.status(code).json({
       message: error.message,
     });
   }
