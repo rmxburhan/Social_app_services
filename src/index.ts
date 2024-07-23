@@ -6,11 +6,13 @@ import initRoutes from "./routes/index";
 import bodyParser from "body-parser";
 import initSwagger from "./startup/swagger";
 import { errorHandlers } from "./middleware/errror-handler.middleware";
+import path from "path";
 
 const app: Express = express();
 dotenv.config();
 
 app.use(bodyParser.json());
+app.use(express.static(path.join(process.cwd(), "public")));
 initDB();
 initCORS(app);
 initRoutes(app);
