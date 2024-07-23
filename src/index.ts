@@ -6,7 +6,6 @@ import initRoutes from "./routes/index";
 import bodyParser from "body-parser";
 import initSwagger from "./startup/swagger";
 import { errorHandlers } from "./middleware/errror-handler.middleware";
-import { start } from "repl";
 
 const app: Express = express();
 dotenv.config();
