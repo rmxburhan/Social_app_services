@@ -1,0 +1,1088 @@
+openapi: 3.0.1
+info:
+  title: Social Media API
+  description: This is a sample server for a social media application.
+  version: 1.0.0
+servers:
+- url: https://localhost:5000/api
+tags:
+- name: auth
+  description: Authentication related operations
+- name: user
+  description: User related operations
+- name: post
+  description: Post related operations
+- name: comments
+  description: Comment related operations
+paths:
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: Login user
+      operationId: loginUser
+      requestBody:
+        description: Login user
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    $ref: '#/components/schemas/Token'
+                  data:
+                    $ref: '#/components/schemas/User'
+        "400":
+          description: failed operation for example you type the wrong password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: username or email is not registered in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      x-codegen-request-body-name: body
+  /user/register:
+    post:
+      tags:
+      - user
+      summary: Register a new user
+      operationId: registerUser
+      requestBody:
+        description: User object that needs to be added
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Johndoe
+                username:
+                  type: string
+                  example: username
+                email:
+                  type: string
+                  example: johndoe@gmail.com
+                password:
+                  type: string
+                  example: password
+        required: true
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: this is your message from me (server) to you
+        "400":
+          description: "this is a failed request which can be caused by the email\
+            \ username already registered or you not input is not valid according\
+            \ our validation,"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: this is your message from me (server) to you
+      x-codegen-request-body-name: body
+  /user/:
+    get:
+      tags:
+      - user
+      summary: Get user information
+      operationId: getUser
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    post:
+      tags:
+      - user
+      summary: Update user profile
+      operationId: updateUserProfile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                name:
+                  type: string
+        required: false
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      x-codegen-request-body-name: body
+  /user/{username}:
+    get:
+      tags:
+      - user
+      summary: Get user by username
+      operationId: getUserByUsername
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{username}/posts:
+    get:
+      tags:
+      - user
+      summary: Get posts by user
+      operationId: getPostsByUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Post'
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{username}/follow:
+    post:
+      tags:
+      - user
+      summary: Follow a user
+      operationId: followUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{username}/unfollow:
+    post:
+      tags:
+      - user
+      summary: Unfollow a user
+      operationId: unfollowUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{username}/following:
+    get:
+      tags:
+      - user
+      summary: Get following data
+      operationId: getFollowingData
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/{username}/followers:
+    get:
+      tags:
+      - user
+      summary: Get followers
+      operationId: getFollowers
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        "404":
+          description: username doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /user/savedposts:
+    get:
+      tags:
+      - user
+      summary: Get my saved posts
+      operationId: getSavedPosts
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+  /posts:
+    get:
+      tags:
+      - post
+      summary: Get new posted posts
+      operationId: getNewPostedPosts
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+    post:
+      tags:
+      - post
+      summary: Create a new post
+      operationId: createPost
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - caption
+              type: object
+              properties:
+                image:
+                  description: Post data
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                caption:
+                  type: string
+                  description: Post data
+                tags:
+                  type: array
+                  description: Post data
+                  items:
+                    type: string
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /posts/{id}:
+    get:
+      tags:
+      - post
+      summary: Get a single post
+      operationId: getSinglePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Post'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      tags:
+      - post
+      summary: Update a post
+      operationId: updatePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - caption
+              type: object
+              properties:
+                image:
+                  description: Post data
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                caption:
+                  type: string
+                  description: Post data
+                tags:
+                  type: array
+                  description: Post data
+                  items:
+                    type: string
+        required: true
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      tags:
+      - post
+      summary: Delete a post
+      operationId: deletePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "successful operation,"
+          content: {}
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /posts/{id}/like:
+    post:
+      tags:
+      - post
+      summary: Like a post
+      operationId: likePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /posts/{id}/unlike:
+    post:
+      tags:
+      - post
+      summary: Unlike a post
+      operationId: unlikePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /posts/{id}/save:
+    post:
+      tags:
+      - post
+      summary: Save a post
+      operationId: savePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /posts/{id}/unsave:
+    post:
+      tags:
+      - post
+      summary: Unsave a post
+      operationId: unsavePost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /posts/{id}/comments:
+    get:
+      tags:
+        - post
+      summary: get all comments in a post
+      operationId: getPostComments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+    post:
+      tags:
+      - post
+      summary: Comment on a post
+      operationId: commentPost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Comment object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      x-codegen-request-body-name: body
+  /comments/{id}:
+    get:
+      tags:
+      - comments
+      summary: Get a comment
+      operationId: getComment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Comment'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+    put:
+      tags:
+      - comments
+      summary: Edit a comment
+      operationId: editComment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Comment object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - comments
+      summary: Delete a comment
+      operationId: deleteComment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /comments/{id}/reply:
+    post:
+      tags:
+      - comments
+      summary: Reply to a comment
+      operationId: replyComment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Comment object
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: "successful operation,"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "404":
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        "400":
+          description: failed operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      x-codegen-request-body-name: body
+security:
+  - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  # Optional, to specify the format of the token
+  schemas:
+    Token:
+      type: string
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjllNWVlMmQ1MmFmNTI0ODA3Mjc5NzYiLCJuYW1lIjoiVXNlcjEiLCJ1c2VybmFtZSI6IjEyMyIsImVtYWlsIjoidXNlcjFAdXNlcjEuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkMUhYMkFVNC5ZQ0JYZ3N3ckdwN3djZUJZLndQUHlrV0gvT2s4VDkxNm1sV2MzNkpGQ3ZFVWEiLCJpc0FkbWluIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwidXBkYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwiX192IjowLCJpYXQiOjE3MjE3MzUzODYsImV4cCI6MTcyMTczODk4NiwiaXNzIjoicm14YnVyaGFuLnNvY2lhbC5tZWRpYSJ9.q3fZFCYsJHUsad32kybHPbGPcGwkQzmhqxIeTugfzRw
+        user:
+          type: object
+          properties: {}
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 669e5ee2d52af52480727976
+        name:
+          type: string
+          example: Johndoe
+        username:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          example: johndoe@example.com
+        password:
+          type: string
+          example: password123
+        isAdmin:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        updatedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+    Post:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: My First Post
+        caption:
+          type: string
+          example: This is the content of the post.
+        image:
+          type: array
+          items:
+            type: string
+            example: ""
+        tags:
+          type: array
+          items:
+            type: string
+            example: ""
+        deletedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        createdAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        updatedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+    Comment:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "1"
+        body:
+          type: string
+          example: This is a comment.
+        replyTo:
+          type: string
+          example: 6bas8dasd9asdn9
+        userId:
+          type: string
+          example: 6bas8dasd9asdn9
+        postId:
+          type: string
+          example: 6bas8dasd9asdn9
+        deletedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        createdAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        updatedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+    Follow:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6bas8dasd9asdn9
+        followingId:
+          type: string
+          example: 6bas8dasd9asdn9
+        followerId:
+          type: string
+          example: 6bas8dasd9asdn9
+        createdAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+        updatedAt:
+          type: string
+          example: 2022-01-01'T'01:01:01.111'Z'
+    Save:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6bas8dasd9asdn9
+        postId:
+          type: string
+          example: 6bas8dasd9asdn9
+        userId:
+          type: string
+          example: 6bas8dasd9asdn9
+        createdAt:
+          type: string
+          example: 6bas8dasd9asdn9
+    LikeComment:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6bas8dasd9asdn9
+        commentId:
+          type: string
+          example: 6bas8dasd9asdn9
+        userId:
+          type: string
+          example: 6bas8dasd9asdn9
+        createdAt:
+          type: string
+          example: 6bas8dasd9asdn9
+    LikePost:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6bas8dasd9asdn9
+        postId:
+          type: string
+          example: 6bas8dasd9asdn9
+        userId:
+          type: string
+          example: 6bas8dasd9asdn9
+        createdAt:
+          type: string
+          example: 6bas8dasd9asdn9
+x-original-swagger-version: "2.0"
