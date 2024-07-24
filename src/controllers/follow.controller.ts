@@ -124,10 +124,7 @@ export const getFollowers = async (
       return;
     }
 
-    const followers = await FollowService.findFollowBy(
-      "followingId",
-      userData.id
-    );
+    const followers = await FollowService.getFollowers(userData.id);
 
     return res.status(200).json({
       message: "Followers data from " + username + " success retrieved.",
@@ -155,7 +152,7 @@ export const getFollowing = async (
       return;
     }
 
-    const following = await FollowService.findFollowBy("followerId", user.id);
+    const following = await FollowService.getFollowing(user.id);
 
     return res.status(200).json({
       message: "Following data from " + username + " success retrieved,",

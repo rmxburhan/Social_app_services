@@ -29,10 +29,34 @@ export const findFollow = async ({
 export const findFollowBy = async (prop: string, value: string) =>
   await Follow.findOne({ [prop]: value });
 
+export const getFollowers = async (
+  userId: string
+): Promise<FollowDocument[]> => {
+  const followers = await Follow.find({
+    followingId: userId,
+  })
+    .populate({ path: "followerId", select: "name username -_id" })
+    .select("followerId");
+
+  return followers;
+};
+
+export const getFollowing = async (userId: string) => {
+  const followingDatas = await Follow.find({
+    followerId: userId,
+  })
+    .populate({ path: "followingId", select: "name username -_id" })
+    .select("followingId");
+
+  return followingDatas;
+};
+
 export default {
   createFollow,
   saveFollow,
   deleteFollow,
   findFollow,
   findFollowBy,
+  getFollowers,
+  getFollowing,
 };

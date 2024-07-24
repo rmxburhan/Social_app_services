@@ -1,4 +1,5 @@
 import { Document, Schema, model } from "mongoose";
+
 export interface FollowDocument extends Document {
   followingId: typeof Schema.Types.ObjectId;
   followerId: typeof Schema.Types.ObjectId;
