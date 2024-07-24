@@ -19,7 +19,7 @@ const initSwagger = (app: Express) => {
   const host = process.env.APP_HOST;
   if (host) {
     swaggerDocument.servers.unshift({
-      url: path.join(host, "api"),
+      url: host + "/api",
     });
   }
 
