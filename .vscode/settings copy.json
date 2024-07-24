@@ -1,0 +1,16 @@
+{
+    "rest-client.environmentVariables": {
+        "local": {
+            "baseUrl": "http://localhost:5000/api",
+            "token": ""
+        },
+        "staging": {
+            "baseUrl": "http://localhost:3001/api",
+            "token": ""
+        },
+        "production": {
+            "baseUrl": "https://social-media-services.onrender.com/api",
+            "token": ""
+        }
+    }
+}
