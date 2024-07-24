@@ -116,7 +116,6 @@ export const getPost = async (
   try {
     const { id } = req.params;
     const post = await PostService.getPostById(id);
-
     return res.status(200).json({
       message: "Post data succes retrieved.",
       data: post,
@@ -151,6 +150,12 @@ export const likePost = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await PostService.likePost(id, user.id);
+
+    if (!like) {
+      const error = new Error("Like post failed. id not found");
+      error.name = "BadRequest";
+      throw error;
+    }
     return res.status(201).json({
       message: "Like post success",
     });
@@ -168,6 +173,12 @@ export const unlikePost = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await PostService.unlikePost(id, user.id);
+    console.log(like);
+    if (!like) {
+      const error = new Error("Unlike failed. id not found");
+      error.name = "BadRequest";
+      throw error;
+    }
     return res.status(200).json({
       message: "Post has been unliked",
     });

@@ -1,7 +1,5 @@
-import dayjs from "dayjs";
 import Comment, { CommentDocument } from "../models/comment.model";
-import LikeComment from "../models/likecomment.model";
-import likecommentService from "./likecomment.service";
+import { Types } from "mongoose";
 
 export const getComments = async (postId: string) =>
   await Comment.find({ postId: postId });
@@ -38,17 +36,12 @@ export const deleteComment = async (id: string, userId: string) => {
     error.name = "Forbidden";
     throw error;
   }
-
-  comment.deletedAt = dayjs().toDate();
-  await Comment.updateMany(
-    { replyTo: comment.id },
-    { deletedAt: dayjs().toDate() }
-  );
-  await comment.save();
+  return await Comment.deleteMany({
+    $or: [{ replyTo: comment.id }, { _id: comment.id }],
+  });
 };
 
-export const getCommentById = async (id: string) =>
-  await Comment.findOne({ _id: id, deletedAt: undefined });
+export const getCommentById = async (id: string) => await Comment.findById(id);
 
 export const updateComment = async (
   commentId: string,
@@ -74,7 +67,7 @@ export const updateComment = async (
 };
 
 export const getCommentBy = async (prop: string, value: string) =>
-  await Comment.find({ [prop]: value, deletedAt: undefined });
+  await Comment.find({ [prop]: value });
 
 export const replyComment = async ({
   body,
@@ -101,45 +94,15 @@ export const replyComment = async ({
   return await saveComment(newComment);
 };
 
-export const likeComment = async (commentId: string, userId: string) => {
-  const comment = await getCommentById(commentId);
-
-  if (!comment) {
-    const error = new Error("Comment not found");
-    error.name = "NotFound";
-    throw error;
-  }
-
-  const like = await likecommentService.getLikeComment(userId, comment.id);
-
-  if (like) {
-    const error = new Error(
-      "You are already like this post. you cannot do it twice"
-    );
-    error.name = "BadRequest";
-    throw error;
-  }
-
-  const newLike = new LikeComment({
-    commentId: comment.id,
-    userId,
-    createdAt: dayjs().toDate(),
+export const likeComment = async (commentId: string, userId: string) =>
+  await Comment.findByIdAndUpdate(commentId, {
+    $addToSet: { likes: new Types.ObjectId(userId) },
   });
 
-  await newLike.save();
-  return newLike;
-};
-
-export const unlikeComment = async (commentId: string, userId: string) => {
-  const like = await likecommentService.getLikeComment(userId, commentId);
-  if (!like) {
-    const error = new Error("You are not like the post.");
-    error.name = "BadRequest";
-    throw error;
-  }
-
-  await likecommentService.deletLikeComment(like.id);
-};
+export const unlikeComment = async (commentId: string, userId: string) =>
+  await Comment.findByIdAndUpdate(commentId, {
+    $pull: { likes: new Types.ObjectId(userId) },
+  });
 
 export default {
   getComments,

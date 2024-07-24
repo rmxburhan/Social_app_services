@@ -1,21 +1,16 @@
-import dayjs from "dayjs";
-import { SchemaTypes } from "mongoose";
+import { SchemaTypes, Types } from "mongoose";
 import Post, { PostDocument, PostQuery } from "../models/post.model";
-import LikePost from "../models/likepost.model";
-import likepostService, { getLikePost } from "./likepost.service";
 import { existsSync, unlinkSync } from "fs";
 import path from "path";
 
 export const getPosts = async (
   query: PostQuery = {}
 ): Promise<PostDocument[]> => {
-  query.deletedAt = undefined;
   const posts = await Post.find(query).sort({ createdAt: -1 });
   return posts;
 };
 
 export const getPostBy = async (query: PostQuery): Promise<PostDocument> => {
-  query.deletedAt = undefined;
   const post = await Post.findOne(query);
   if (!post) {
     const error = new Error("Post not found");
@@ -26,7 +21,7 @@ export const getPostBy = async (query: PostQuery): Promise<PostDocument> => {
 };
 
 export const getPostById = async (id: string): Promise<PostDocument> => {
-  const post = await Post.findOne({ _id: id, deletedAt: undefined });
+  const post = await Post.findById(id);
   if (!post) {
     const error = new Error("Post not found.");
     error.name = "NotFound";
@@ -59,34 +54,9 @@ export const createPost = ({
     tags,
     userId,
   });
-getPostById;
-
-export const deletePost = async (id: string) => {
-  const post = await Post.findOne({ _id: id, deletedAt: undefined });
-
-  if (!post) {
-    const error = new Error("Post not found. Delete failed");
-    error.name = "NotFound";
-    throw error;
-  }
-  post.image?.forEach((item) => {
-    const pathFile = path.join(process.cwd(), item);
-    if (existsSync(pathFile)) {
-      unlinkSync(path.join(process.cwd(), item));
-    }
-  });
-  post.deletedAt = dayjs().toDate();
-  await post.save();
-};
 
 export const deleteMyPost = async (id: string, userId: string) => {
-  const post = await Post.findOne({ _id: id, deletedAt: undefined });
-
-  if (!post) {
-    const error = new Error("Post not found. Delete failed");
-    error.name = "NotFound";
-    throw error;
-  }
+  const post = await getPostById(id);
 
   if (post.userId.toString() !== userId) {
     const error = new Error("You cannot delete another person post");
@@ -99,45 +69,34 @@ export const deleteMyPost = async (id: string, userId: string) => {
       unlinkSync(path.join(process.cwd(), item));
     }
   });
-  post.deletedAt = dayjs().toDate();
-  await post.save();
+
+  return await Post.findByIdAndDelete(post.id);
 };
 
-export const likePost = async (postId: string, userId: string) => {
-  const post = await getPostById(postId);
-
-  const like = await getLikePost(userId, postId);
-  if (like) {
-    const error = new Error("You had like the post");
-    error.name = "BadRequest";
-    throw error;
-  }
-
-  const newLike = new LikePost({
-    postId: post.id,
-    userId: userId,
-    createdAt: dayjs().toDate(),
+export const likePost = async (
+  postId: string,
+  userId: string
+): Promise<PostDocument | null> => {
+  // const post = await getPostById(postId);
+  // if (post.likes.includes(new Types.ObjectId(userId))) {
+  //   const error = new Error();
+  //   error.name = "BadRequest";
+  //   throw error;
+  // }
+  // post.likes.push(new Types.ObjectId(userId));
+  // return await post.save();
+  return await Post.findByIdAndUpdate(postId, {
+    $addToSet: { likes: new Types.ObjectId(userId) },
   });
-
-  await newLike.save();
-  return newLike;
 };
 
-export const unlikePost = async (postId: string, userId: string) => {
-  const like = await likepostService.getLikePost(userId, postId);
-
-  if (!like) {
-    const error = new Error("You were had not like this post");
-    error.name = "BadRequest";
-    throw error;
-  }
-
-  await likepostService.deleteLikePost(like.id);
-};
+export const unlikePost = async (postId: string, userId: string) =>
+  await Post.findByIdAndUpdate(postId, {
+    $pull: { likes: userId },
+  });
 
 export default {
   createPost,
-  deletePost,
   savePost,
   getPostBy,
   getPostById,

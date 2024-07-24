@@ -133,6 +133,11 @@ export const likeComment = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await CommentService.likeComment(id, user.id);
+    if (!like) {
+      const error = new Error("Like comment failed");
+      error.name = "BadRequest";
+      throw error;
+    }
     return res.status(201).json({
       message: "like comment success",
     });
@@ -150,6 +155,11 @@ export const unlikeComment = async (
     const { id } = req.params;
     const user = (req as RequestAuth).user;
     const like = await CommentService.unlikeComment(id, user.id);
+    if (!like) {
+      const error = new Error("Like comment failed");
+      error.name = "BadRequest";
+      throw error;
+    }
     return res.status(204).end();
   } catch (error) {
     next(error);

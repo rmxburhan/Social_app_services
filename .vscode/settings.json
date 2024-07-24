@@ -1,8 +1,8 @@
 {
     "rest-client.environmentVariables": {
         "local": {
-            "baseUrl": "http://localhost:5000/api",
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjllNWVlMmQ1MmFmNTI0ODA3Mjc5NzYiLCJuYW1lIjoiVXNlcjEiLCJ1c2VybmFtZSI6IjEyMyIsImVtYWlsIjoidXNlcjFAdXNlcjEuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkMUhYMkFVNC5ZQ0JYZ3N3ckdwN3djZUJZLndQUHlrV0gvT2s4VDkxNm1sV2MzNkpGQ3ZFVWEiLCJpc0FkbWluIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwidXBkYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwiX192IjowLCJpYXQiOjE3MjE4MDU4ODQsImV4cCI6MTcyMTgwOTQ4NCwiaXNzIjoicm14YnVyaGFuLnNvY2lhbC5tZWRpYSJ9.qNseIpkAEUB7W1ugRQ83jzYEkz2zj-NOjzLbKCke6Bw"
+            "baseUrl": "http://localhost:3000/api",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjllNWVlMmQ1MmFmNTI0ODA3Mjc5NzYiLCJuYW1lIjoiVXNlcjEiLCJ1c2VybmFtZSI6IjEyMyIsImVtYWlsIjoidXNlcjFAdXNlcjEuY29tIiwicGFzc3dvcmQiOiIkMmEkMTAkMUhYMkFVNC5ZQ0JYZ3N3ckdwN3djZUJZLndQUHlrV0gvT2s4VDkxNm1sV2MzNkpGQ3ZFVWEiLCJpc0FkbWluIjpmYWxzZSwiY3JlYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwidXBkYXRlZEF0IjoiMjAyNC0wNy0yMlQxMzozMDoxMC4xNjZaIiwiX192IjowLCJpYXQiOjE3MjE4MTM1NDQsImV4cCI6MTcyMTgxNzE0NCwiaXNzIjoicm14YnVyaGFuLnNvY2lhbC5tZWRpYSJ9.8iyZ8zLRCdZOfaM84oUKvStfnHBGmFC631BJEHB-6-Y"
         },
         "staging": {
             "baseUrl": "http://localhost:3001/api",

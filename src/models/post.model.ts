@@ -1,11 +1,11 @@
-import { Model, Schema, model, Document } from "mongoose";
+import { Model, Schema, model, Document, Types } from "mongoose";
 
 export interface PostDocument extends Document {
   userId: typeof Schema.Types.ObjectId;
   caption: string;
   image?: string[];
   tags?: (typeof Schema.Types.ObjectId)[];
-  deletedAt?: Date;
+  likes: [Types.ObjectId];
 }
 
 export interface PostQuery {
@@ -13,7 +13,6 @@ export interface PostQuery {
   caption?: any;
   image?: any;
   tags?: any;
-  deletedAt?: string | undefined;
 }
 const postSchema = new Schema<PostDocument>(
   {
@@ -34,13 +33,25 @@ const postSchema = new Schema<PostDocument>(
       type: [Schema.Types.ObjectId],
       default: [],
     },
-    deletedAt: {
-      type: Date,
-      required: false,
-    },
+    likes: [{ type: Types.ObjectId, ref: "User" }],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
+
+postSchema.virtual("totalLike").get(function (this: PostDocument) {
+  return this.likes.length;
+});
+
+postSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "postId",
+});
 
 export const Post: Model<PostDocument> = model<PostDocument>(
   "Post",

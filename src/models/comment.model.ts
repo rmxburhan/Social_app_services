@@ -1,11 +1,11 @@
-import { Document, Schema, model } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
 export interface CommentDocument extends Document {
   body: string;
-  replyTo?: typeof Schema.Types.ObjectId;
-  userId: typeof Schema.Types.ObjectId;
-  postId: typeof Schema.Types.ObjectId;
-  deletedAt?: Date;
+  replyTo?: Types.ObjectId;
+  userId: Types.ObjectId;
+  postId: Types.ObjectId;
+  likes: [Types.ObjectId];
 }
 
 const commentSchema = new Schema<CommentDocument>(
@@ -17,7 +17,7 @@ const commentSchema = new Schema<CommentDocument>(
     replyTo: {
       type: Schema.Types.ObjectId,
       required: false,
-      ref: "Coment",
+      ref: "Comment",
     },
     userId: {
       type: Schema.Types.ObjectId,
@@ -28,22 +28,20 @@ const commentSchema = new Schema<CommentDocument>(
       type: Schema.Types.ObjectId,
       ref: "Post",
     },
-    deletedAt: {
-      type: Date,
-      required: false,
-    },
+    likes: [
+      {
+        type: Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,
     toObject: {
-      getters: true,
       virtuals: true,
-      versionKey: false,
     },
     toJSON: {
-      getters: true,
       virtuals: true,
-      versionKey: false,
     },
   }
 );
